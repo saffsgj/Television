@@ -1,0 +1,247 @@
+<!DOCTYPE html>  
+<html lang="ar" dir="rtl">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>تطبيق مشاهدة</title>  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">  
+<style>  
+  * {margin:0; padding:0; box-sizing: border-box; font-family: "Tajawal", sans-serif;}  
+  body {  
+    height: 100%;  
+    color:#eee;  
+    padding-top: 60px;   
+    padding-bottom: 60px;   
+    background:   
+      linear-gradient(120deg, #0f0f0f, #1a1a1a, #2c1a3d, #3a1a5d, #2c2c2c) no-repeat,  
+      linear-gradient(45deg, #1a2c3d, #2c3a5d, #3a5d7d, #5d3a7d, #2c2c2c) no-repeat,  
+      linear-gradient(60deg, #141414, #2c2c2c, #3d2c5d, #5d3a7d, #2c2c2c) no-repeat;  
+    background-size: 300% 300%;  
+    animation: gradientLayer 30s ease infinite;  
+    -webkit-user-select: none;  
+    -moz-user-select: none;  
+    -ms-user-select: none;  
+    user-select: none;  
+  }  
+  @keyframes gradientLayer {  
+    0% {background-position: 0% 50%, 0% 50%, 0% 50%;}  
+    25% {background-position: 50% 50%, 25% 50%, 75% 50%;}  
+    50% {background-position: 100% 50%, 50% 50%, 50% 50%;}  
+    75% {background-position: 50% 50%, 75% 50%, 25% 50%;}  
+    100% {background-position: 0% 50%, 0% 50%, 0% 50%;}  
+  }  
+  
+  /* شريط علوي */  
+  .top-bar {  
+    display: flex;  
+    align-items: center;  
+    justify-content: space-between;  
+    padding: 5px 15px;  
+    height: 50px;  
+    background: linear-gradient(120deg, #0f0f0f, #1a1a1a, #2c1a3d, #3a1a5d, #2c2c2c);  
+    background-size: 300% 300%;  
+    animation: gradientLayer 30s ease infinite;  
+    border-bottom: 1px solid rgba(255,255,255,0.1);  
+    position: fixed;  
+    top: 0;  
+    left: 0;  
+    width: 100%;  
+    z-index: 1000;  
+    font-family: 'Cairo', sans-serif;  
+  }  
+  .top-left { display: flex; align-items: center; gap: 10px; }  
+  .app-icon { height: 35px; width: 35px; border-radius: 5px; object-fit: cover; }  
+  .app-name {  
+    font-weight: 700;  
+    font-size: 20px;  
+    background: linear-gradient(90deg, #ff5e62, #ff9966, #ffc371, #70ff9a, #70a1ff);  
+    background-size: 300% 300%;  
+    -webkit-background-clip: text;  
+    -webkit-text-fill-color: transparent;  
+    animation: gradientText 5s ease infinite;  
+  }  
+  @keyframes gradientText {  
+    0% {background-position: 0% 50%;}  
+    50% {background-position: 100% 50%;}  
+    100% {background-position: 0% 50%;}  
+  }  
+  /* أيقونة الدعم الفني */  
+  .support-icon {  
+    display: flex;  
+    align-items: center;  
+    gap: 6px;  
+    font-size: 15px;  
+    font-weight: 600;  
+    background: linear-gradient(90deg, #ff5e62, #ff9966, #ffc371, #70ff9a, #70a1ff);  
+    background-size: 300% 300%;  
+    -webkit-background-clip: text;  
+    -webkit-text-fill-color: transparent;  
+    animation: gradientText 5s ease infinite;  
+    cursor: pointer;  
+  }  
+  .support-icon i { font-size: 18px; }  
+  
+  section {padding: 10px 15px; font-family: 'Tajawal', sans-serif;}  
+  h2 {margin-bottom: 10px; display: flex; align-items: center; font-size: 20px; font-weight: 700;}  
+  h2 i {margin-left: 8px;}  
+  .channels h2 {color: #ffda79;}   
+  .exclusive h2 {color: #70a1ff;}   
+  .popular h2 {color: #ff6b00;}  
+  .romantic h2 {color: #ff6b81;}   
+  .featured-movies h2 {color: #ffd32a;}  
+  .featured-series h2 {color: #70ff9a;}  
+  
+  .slider-section {display: flex; overflow-x: auto; gap: 10px; scroll-behavior: smooth; padding-bottom: 10px;}  
+  .slider-section::-webkit-scrollbar {display: none;}  
+  .channel-card, .exclusive-card, .romantic-card {flex-shrink: 0; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 3px 10px rgba(0,0,0,0.6); background: #1a1a1a; text-align: center;}  
+  .channel-card:hover, .exclusive-card:hover, .romantic-card:hover {transform: scale(1.05); box-shadow: 0 6px 18px rgba(0,0,0,0.8);}  
+  .channel-card {min-width: 90px;}   
+  .channel-card img {width: 100%; height: 60px; object-fit: cover;}   
+  .channel-card p {padding: 3px; font-size: 13px; color: #ddd; font-weight:500;}  
+  .exclusive-card, .romantic-card {min-width: 130px;}   
+  .exclusive-card img, .romantic-card img {width: 100%; height: 160px; object-fit: cover; filter: brightness(0.85);}  
+  .exclusive-info, .romantic-info {padding: 8px;}  
+  .exclusive-info h3, .romantic-info h3 {font-size: 15px; font-weight:700; color: #fff;}  
+  .exclusive-info span, .romantic-info span {font-size: 13px; color: #ffd32a;}  
+  
+  .dynamic-card {position: relative; width: 100%; max-width: 100%; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 8px 20px rgba(255,255,255,0.1); animation: pulseShadow 3s ease-in-out infinite; transition: transform 0.4s, box-shadow 0.4s; margin-bottom: 20px;}  
+  .dynamic-card img { width:100%; height:400px; object-fit:cover; filter:brightness(0.7) contrast(1.1) saturate(1.2) blur(0.5px); transition: transform 0.4s, filter 0.4s; }  
+  .dynamic-card:hover { transform: scale(1.05); box-shadow: 0 20px 40px rgba(255,255,255,0.6); }  
+  .dynamic-card:hover img { transform: scale(1.08); filter:brightness(0.75) contrast(1.15) saturate(1.3); }  
+  
+  @keyframes pulseShadow { 0% {box-shadow:0 8px 20px rgba(255,255,255,0.1);} 50% {box-shadow:0 15px 35px rgba(255,255,255,0.35);} 100% {box-shadow:0 8px 20px rgba(255,255,255,0.1);} }  
+  
+  .card-top-bar { position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; font-size:14px; font-weight:bold; color:#fff; font-family:'Cairo', sans-serif; }  
+  .badge-new, .rating { padding:3px 8px; border-radius:6px; background: linear-gradient(90deg,#b03a5b,#1a2a6c,#2c5364,#0f9b8e); background-size:300% 300%; animation: gradientAnimate 6s ease infinite; box-shadow:0 0 8px rgba(255,255,255,0.4); }  
+  
+  .card-info { position:absolute; bottom:12px; left:12px; right:12px; background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); border-radius:12px; padding:12px; color:#fff; text-align:center; border:1px solid rgba(255,255,255,0.2); font-family:'Tajawal', sans-serif;}  
+  .card-info h3 { margin:0 0 4px 0; font-size:18px; font-weight:700; text-shadow:0 0 6px rgba(0,0,0,0.6); }  
+  .card-info .genre { display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:#ff4b7d; text-shadow:0 0 4px rgba(0,0,0,0.5); }  
+  .card-info p { margin:0 0 8px 0; font-size:14px; font-weight:500; }  
+  .card-info button { width:100%; padding:10px 0; border:none; border-radius:8px; font-weight:700; color:#fff; background: linear-gradient(90deg,#b03a5b,#1a2a6c,#2c5364,#0f9b8e); background-size:300% 300%; animation: gradientAnimate 6s ease infinite; cursor:pointer; box-shadow:0 4px 12px rgba(255,255,255,0.3); transition: transform 0.3s; }  
+  .card-info button:hover { transform: scale(1.05); }  
+  
+  @keyframes gradientAnimate { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }  
+  
+  .bottom-bar {display: flex; justify-content: space-around; align-items: center; position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(120deg, #0f0f0f, #1a1a1a, #2c1a3d, #3a1a5d, #2c2c2c); background-size: 300% 300%; animation: gradientLayer 30s ease infinite; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; font-family:'Cairo', sans-serif;}  
+  .bottom-item {display: flex; flex-direction: column; align-items: center; font-size: 12px; color: #eee; cursor: pointer; transition: transform 0.3s, color 0.3s;}  
+  .bottom-item i {font-size: 18px; margin-bottom: 2px;}  
+  .bottom-item:hover {transform: scale(1.1); color: #ff6b81;}  
+</style>  
+</head>  
+<body>  
+  
+<!-- شريط علوي -->  
+<div class="top-bar">  
+  <div class="top-left">  
+    <img src="https://g.top4top.io/p_3515f8pc10.png" alt="شعار التطبيق" class="app-icon">  
+    <div class="app-name">تلفزيوني</div>  <head></head>
+  </div>  
+  <div class="support-icon" onclick="window.location.href='go:x'"><i class="fas fa-headset"></i> فريق الدعم<span> </span></div>  
+</div>  
+
+<!-- البطاقة الديناميكية -->  
+<section style="padding:15px; display:flex; justify-content:center;">  
+  <div class="dynamic-card" onclick="window.location.href='go:'">
+    <img src="https://g.top4top.io/p_35155xtx10.jpg" alt="فيلم مميز 3">  
+    <div class="card-top-bar">  
+      <span class="badge-new">يعرض قريباً 2</span>  
+      <span class="rating">⭐ 9.6</span>  
+    </div>  
+    <div class="card-info">  
+      <h3> حلم اشرف</h3>  
+      <span class="genre">نوع: أكشن/  مدبلج عربي/ رومانسي</span>  
+      <p>أصبح أشرف عضواً قوياً في المافيا أثناء بحثه لسنوات عن الفتاة التي أسماها "رؤيا". يقع في حب نيسان دون أن يعلم أنها هي رؤيا التي يبحث عنها ومخبرة للشرطة، مما يجره إلى صراع بين الحب والخيانة والسلطة.</p>  
+      <button>شاهد الآن</button>  
+    </div>  
+  </div>  
+</section>  
+
+<!-- أقسام المحتوى -->  
+<section class="channels">  
+  <h2><i class="fas fa-tv"></i> البث المباشر</h2>  
+  <div class="slider-section">  
+    <div class="channel-card" onclick="window.location.href='go:s'"><img src="https://l.top4top.io/p_3515wuwbr0.jpg"><p> Bein Sport</p></div>  
+    <div class="channel-card" onclick="window.location.href='go:d'">
+  <img src="https://b.top4top.io/p_35194eb5q1.jpg" alt="Bein Sport">
+  <p>الكاس </p>
+</div>
+<div class="channel-card" onclick="window.location.href='go:k'">
+  <img src="https://c.top4top.io/p_35193g7520.jpg" alt="Bein Sport">
+  <p> SSC</p>
+</div>
+ <div class="channel-card" onclick="window.location.href='go:k'">
+  <img src="https://b.top4top.io/p_3519gvy4j1.jpg" alt="Bein Sport">
+  <p>الرابعة 4 </p>
+</div>
+ <div class="channel-card">
+  <img src="https://a.top4top.io/p_3519smqa30.jpg" alt="Bein Sport">
+  <p> دجلة</p>
+</div>
+ <div class="channel-card" onclick="window.location.href='go:k'">
+  <img src="https://a.top4top.io/p_3519xo19p0.jpeg" alt="Bein Sport">
+  <p> سبيستون</p>
+</div>
+ <div class="channel-card" onclick="window.location.href='go:k'">
+  <img src="https://f.top4top.io/p_3519ilr110.jpg" alt="Bein Sport">
+  <p> السينما الأجنبية</p>
+</div>
+ <div class="channel-card" onclick="window.location.href='go:k'">
+  <img src="https://g.top4top.io/p_3519mdk3d0.png" alt="Bein Sport">
+  <p>السينما التركية </p>
+</div>
+  </div>  
+</section>  
+
+<section class="exclusive">  
+  <h2><i class="fas fa-star"></i> حصرياً وجديد</h2>  
+  <div class="slider-section">  
+    <div class="romantic-card" onclick="window.location.href='go:g'"><img src="https://f.top4top.io/p_3515gbksp7.jpg"><div class="exclusive-info"><h3>موسم العشق  </h3><span>جديد / مدبلج</span></div></div>  
+  </div>  
+</section>  
+
+<section class="popular">  
+  <h2><i class="fas fa-fire"></i> الأكثر شعبية</h2>  
+  <div class="slider-section">  
+    <div class="romantic-card" onclick="window.location.href='go:g'"><img src="https://k.top4top.io/p_3515agdvn0.jpg"><div class="exclusive-info"><h3>  حلم اشرف</h3><span>مترجم / رومانسي</span></div></div>  
+  </div>  
+</section>  
+
+<section class="romantic">  
+  <h2><i class="fas fa-heart"></i> رومانسي</h2>  
+  <div class="slider-section">  
+    <div class="romantic-card" onclick="window.location.href='go:g'"><img src="https://l.top4top.io/p_35157ya9d1.jpg"><div class="romantic-info"><h3>كيما</h3><span>مدبلج / دراما</span></div></div>  
+  </div>  
+</section>  
+
+<section class="featured-movies">  
+  <h2><i class="fas fa-film"></i> الأفلام المميزة</h2>  
+  <div class="slider-section">  
+    <div class="romantic-card" onclick="window.location.href='go:g'"><img src="https://a.top4top.io/p_351598qyu2.jpg"><div class="exclusive-info"><h3> الطاقيون </h3><span>مترجم / اكشن</span></div></div>  
+  </div>  
+</section>  
+
+<section class="featured-series">  
+  <h2><i class="fas fa-tv"></i> المسلسلات المميزة</h2>  
+  <div class="slider-section">  
+    <div class="romantic-card" onclick="window.location.href='go:f'"><img src="https://picsum.photos/200/300?18"><div class="romantic-info"><h3>  كمين </h3><span>مترجم / حروب</span></div></div>  
+  </div>  
+</section>  
+
+<!-- شريط سفلي -->  
+<div class="bottom-bar">  
+  <div class="bottom-item"><i class="fas fa-home"></i><span>الرئيسية</span></div>  
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-search"></i><span>بحث</span></div>  
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-tv"></i><span>القنوات</span></div>  
+  <div class<div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
+</div>  
+
+<!-- تعطيل النسخ والضغط المطوّل -->  
+<script>  
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });  
+  document.addEventListener('selectstart', function(e) { e.preventDefault(); });  
+  document.addEventListener('copy', function(e) { e.preventDefault(); });  
+</script>  
+</body>  
+</html>
