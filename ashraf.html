@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق مشاهدة</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * {margin:0; padding:0; box-sizing:border-box; font-family:"Tajawal", sans-serif; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;}
+  body {
+    color:#eee; padding-top:50px; padding-bottom:60px;
+    background:
+      linear-gradient(120deg,#0f0f0f,#1a1a1a,#2c1a3d,#3a1a5d,#2c2c2c) no-repeat,
+      linear-gradient(45deg,#1a2c3d,#2c3a5d,#3a5d7d,#5d3a7d,#2c2c2c) no-repeat,
+      linear-gradient(60deg,#141414,#2c2c2c,#3d2c5d,#5d3a7d,#2c2c2c) no-repeat;
+    background-size:300% 300%;
+    animation: gradientLayer 30s ease infinite;
+  }
+  @keyframes gradientLayer {0% {background-position:0% 50%,0% 50%,0% 50%;} 25% {background-position:50% 50%,25% 50%,75% 50%;} 50% {background-position:100% 50%,50% 50%,50% 50%;} 75% {background-position:50% 50%,75% 50%,25% 50%;} 100% {background-position:0% 50%,0% 50%,0% 50%;}}
+  .top-bar {display:flex; align-items:center; gap:10px; padding:5px 15px; height:50px;
+    background:linear-gradient(120deg,#0f0f0f,#1a1a1a,#2c1a3d,#3a1a5d,#2c2c2c);
+    background-size:300% 300%; animation:gradientLayer 30s ease infinite;
+    border-bottom:1px solid rgba(255,255,255,0.1); position:fixed; top:0; left:0; width:100%; z-index:1000;
+    font-family:'Cairo', sans-serif;}
+  .app-icon {height:35px; width:35px; border-radius:5px; object-fit:cover;}
+  .app-name {font-weight:700; font-size:20px;
+    background:linear-gradient(90deg,#ff5e62,#ff9966,#ffc371,#70ff9a,#70a1ff);
+    background-size:300% 300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation:gradientText 5s ease infinite;}
+  @keyframes gradientText {0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;}}
+  
+  .video-container {width:100%; max-width:800px; margin:0 auto; position:relative;}
+  video {width:100%; height:220px; background:#000; display:block; outline:none;}
+  
+  /* أزرار التحكم الجديدة */
+  .video-btn {position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:18px; transition: all 0.3s; box-shadow:0 0 8px rgba(0,0,0,0.5);}
+  .mute-btn {left:10px; background: linear-gradient(135deg,#1a1a1a,#2c2c2c,#3a1a5d); color:#fff;}
+  .fullscreen-btn {right:10px; background: linear-gradient(135deg,#1a1a1a,#2c2c2c,#3a1a5d); color:#fff;}
+  .video-btn:hover {transform:translateY(-50%) scale(1.2);}
+  
+  .video-separator {height:6px; width:100%; max-width:800px; margin:0 auto;
+    background:linear-gradient(270deg,#0d0d0d,#1a1a1a,#4b0082,#6a0dad,#1a1a1a,#0d0d0d);
+    background-size:400% 400%; animation: separatorMove 8s ease infinite;
+    box-shadow:0 0 8px rgba(90,50,150,0.6);}
+  @keyframes separatorMove {0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;}}
+  
+  .series-info {display:flex; align-items:flex-start; gap:12px; padding:15px; max-width:800px; margin:10px auto; border-bottom:1px solid rgba(255,255,255,0.1);}
+  .series-info img {width:90px; height:120px; border-radius:10px; object-fit:cover; flex-shrink:0; box-shadow:0 0 10px rgba(0,0,0,0.5);}
+  .series-details {flex:1;}
+  .series-details h2 {font-size:18px; margin-bottom:6px; color:#ffcc70;}
+  .series-meta {font-size:13px; margin-bottom:8px; color:#bbb;}
+  .series-meta span {margin-right:10px;}
+  .series-bio {font-size:14px; line-height:1.5; color:#ddd;}
+  .episodes-section {padding:15px; max-width:800px; margin:10px auto;}
+  .episodes-section h3 {color:#ffcc70; display:inline-block; margin-right:15px;}
+  .season-buttons {display:inline-block; vertical-align:middle;}
+  .season-buttons button {
+    background:rgba(0,0,0,0.4); border:none; border-radius:8px; color:#fff; font-weight:500;
+    padding:5px 12px; margin-left:5px; cursor:pointer; transition: all 0.3s;}
+  .season-buttons button.active, .season-buttons button:hover {
+    background:linear-gradient(90deg,#ff5e62,#ff9966,#ffc371,#70ff9a,#70a1ff); color:#000;}
+  .episode-card {display:flex; gap:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); border-radius:10px; padding:10px; align-items:flex-start; cursor:pointer; transition:all 0.3s;}
+  .episode-card img {width:90px; height:60px; object-fit:cover; border-radius:5px; flex-shrink:0;}
+  .episode-details h4 {margin:0 0 4px 0; color:#ffcc70; font-size:15px;}
+  .episode-details p {margin:0; color:#ddd; font-size:13px; line-height:1.3;}
+  .episode-season {font-size:12px; color:#70ff9a; font-weight:500; margin-left:5px; cursor:pointer;}
+  .episode-card.active {background: linear-gradient(135deg, #ff5e62, #ff9966, #ffc371, #70ff9a, #70a1ff); background-size: 400% 400%; animation: activeEpisodeGradient 8s ease infinite; color: #000; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 12px rgba(255,200,100,0.6);}
+  .episode-card.active .episode-details h4, .episode-card.active .episode-details p {color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.6);}
+  @keyframes activeEpisodeGradient {0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }}
+  
+  .bottom-bar {display:flex; justify-content:space-around; align-items:center; position:fixed; bottom:0; left:0; width:100%; height:50px; background:linear-gradient(120deg,#0f0f0f,#1a1a1a,#2c1a3d,#3a1a5d,#2c2c2c); background-size:300% 300%; animation:gradientLayer 30s ease infinite; border-top:1px solid rgba(255,255,255,0.1); z-index:1000; font-family:'Cairo', sans-serif;}
+  .bottom-item {display:flex; flex-direction:column; align-items:center; font-size:12px; color:#eee; cursor:pointer; transition:transform 0.3s, color 0.3s;}
+  .bottom-item i {font-size:18px; margin-bottom:2px;}
+  .bottom-item:hover {transform:scale(1.1); color:#ff6b81;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <img src="https://g.top4top.io/p_3515f8pc10.png" alt="شعار التطبيق" class="app-icon">
+  <div class="app-name">تلفزيوني</div>
+</div>
+
+<div class="video-container">
+  <video id="mainVideo" 
+         disablePictureInPicture 
+         controlsList="nodownload nofullscreen noremoteplayback" 
+         playsinline></video>
+  <div class="video-btn mute-btn" id="muteBtn"><i class="fas fa-volume-mute"></i></div>
+  <div class="video-btn fullscreen-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></div>
+</div>
+
+<div class="video-separator"></div>
+
+<div class="series-info">
+  <img src="https://k.top4top.io/p_3515agdvn0.jpg" alt="بوستر المسلسل">
+  <div class="series-details">
+    <h2>حلم اشرف</h2>
+    <div class="series-meta">
+      <span>🌟 6.5/10</span>
+      <span>💖 رومانسي / مدبلج عربي</span>
+    </div>
+    <div class="series-bio">
+      أصبح أشرف عضواً قوياً في المافيا أثناء بحثه لسنوات عن الفتاة التي أسماها "رؤيا". يقع في حب نيسان دون أن يعلم أنها هي رؤيا التي يبحث عنها ومخبرة للشرطة، مما يجره إلى صراع بين الحب والخيانة والسلطة، ليواجه تحديات كبيرة تغير حياته للأبد.
+    </div>
+  </div>
+</div>
+
+<div class="episodes-section">
+  <h3>الحلقات</h3>
+  <div class="season-buttons">
+    <button class="active" data-season="all">الكل</button>
+    <button data-season="season1">الموسم 1</button>
+    <button data-season="season2">الموسم 2</button>
+  </div>
+
+  <div id="episodesContainer" style="margin-top:10px;">
+    <div class="episode-card" data-src="https://vod3.cf.dmcdn.net/sec2(PDdtnVCtON6HS4VeDqAfne8e8HNr3S98PepRAXI2vdBG5vTymZZgCpD4JgaHaS3fo74_tRriCeD44M92lhAKMHVpwqdlbflFZ6jx-zVLtaGZXb_lhpX8vIJb8mR368TEyEnrC_LQZfVVek3ZBV97ExZ7ipMr5yZlZYvmZ0VHt8zB4cMBXbG_phEZadIN9lA3)/video/476/145/578541674_mp4_h264_aac_hq_1.m3u8#cell=cf3">
+      <img src="https://h.top4top.io/p_3522eogs40.jpg">
+      <div class="episode-details">
+        <h4>الحلقة 1: حلم اشرف <span class="episode-season">(الموسم 1)</span></h4>
+        <p>أولى حلقات المسلسل حيث نتابع حياة والتر وايت وكيف يقرر دخول عالم المخدرات بعد تشخيص إصابته بالسرطان.</p>
+      </div>
+    </div>
+    <div class="episode-card" data-src="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+      <img src="https://h.top4top.io/p_3522eogs40.jpg">
+      <div class="episode-details">
+        <h4>الحلقة 2: حلم اشرف <span class="episode-season">(الموسم 2)</span></h4>
+        <p>تستمر الأحداث بتصاعد المشاكل، حيث يبدأ والتر بتجربة المخدرات الأولى ويواجه مخاطر كبيرة.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-search"></i><span>بحث</span></div>
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-tv"></i><span>القنوات</span></div>
+  <div class="bottom-item" onclick="window.location.href='go:x'"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
+</div>
+
+<script>
+const video = document.getElementById('mainVideo');
+const muteBtn = document.getElementById('muteBtn');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+// تحميل الحلقة
+function loadEpisode(src){
+  video.src = src;
+  video.load();
+  tryPlayVideo();
+}
+
+// تشغيل تلقائي
+function tryPlayVideo(){ video.play().catch(()=>{setTimeout(tryPlayVideo,200);}); }
+
+// زر كتم/تشغيل الصوت
+muteBtn.addEventListener('click', ()=>{
+  video.muted = !video.muted;
+  muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+});
+
+// زر تكبير/تصغير
+fullscreenBtn.addEventListener('click', ()=>{
+  if(!document.fullscreenElement){
+    video.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+// تريلر يبدأ مكتوم الصوت
+video.muted = true;
+loadEpisode("https://vod3.cf.dmcdn.net/sec2(PDdtnVCtON6HS4VeDqAfne8e8HNr3S98PepRAXI2vdBG5vTymZZgCpD4JgaHaS3fo74_tRriCeD44M92lhAKMHVpwqdlbflFZ6jx-zVLtaGZXb_lhpX8vIJb8mR368TEyEnrC_LQZfVVek3ZBV97ExZ7ipMr5yZlZYvmZ0VHt8zB4cMBXbG_phEZadIN9lA3)/video/476/145/578541674_mp4_h264_aac_hq_1.m3u8#cell=cf3");
+
+// الضغط على الحلقة
+document.querySelectorAll('.episode-card').forEach(ep=>{
+  ep.addEventListener('click', ()=>{
+    document.querySelectorAll('.episode-card').forEach(c => c.classList.remove('active'));
+    ep.classList.add('active');
+    loadEpisode(ep.getAttribute('data-src'));
+  });
+});
+
+// فلتر المواسم
+const seasonButtons = document.querySelectorAll('.season-buttons button');
+function filterEpisodes(season){
+  document.querySelectorAll('#episodesContainer .episode-card').forEach(card=>{
+    const seasonText = card.querySelector('.episode-season').textContent;
+    const match = seasonText.match(/الموسم\s*(\d+)/i);
+    const cardSeason = match ? 'season' + match[1] : 'all';
+    card.style.display = (season==='all' || cardSeason===season) ? 'flex' : 'none';
+  });
+}
+seasonButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    seasonButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filterEpisodes(btn.dataset.season);
+  });
+});
+</script>
+
+</body>
+</html>
